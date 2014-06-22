@@ -1,0 +1,17 @@
+body
+{
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+#main
+{
+	margin: auto;
+	width: 800px;
+}
+
+#game
+{
+	background-color: black;
+	width: 800px;
+	height: 600px;
+}
