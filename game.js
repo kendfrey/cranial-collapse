@@ -43,6 +43,46 @@ function GameManager(game)
 	}
 }
 
-var testGame = { start: function () { console.log("start"); }, end: function () { console.log("end"); } };
+function BaseGame(extensions)
+{
+	if (!(this instanceof BaseGame))
+	{
+		return new BaseGame(extensions);
+	}
+	
+	this.start = function ()
+	{
+		console.log("start");
+		
+		for (var i = 0; i < extensions.length; i++)
+		{
+			extensions[i].start();
+		}
+	}
+	
+	this.update = function ()
+	{
+		for (var i = 0; i < extensions.length; i++)
+		{
+			extensions[i].update();
+		}
+	}
+	
+	this.render = function ()
+	{
+		
+	}
+	
+	this.end = function ()
+	{
+		console.log("end");
+		
+		for (var i = 0; i < extensions.length; i++)
+		{
+			extensions[i].end();
+		}
+	}
+}
 
-new GameManager(testGame);
+var game = new BaseGame([]);
+new GameManager(game);
