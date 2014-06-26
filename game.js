@@ -34,7 +34,7 @@ function GameManager(game)
 		var pointerLockElement = document.pointerLockElement || document.mozPointerLockElement || document.webkitPointerLockElement || document.msPointerLockElement;
 		if (pointerLockElement === container)
 		{
-			game.start();
+			game.start(container);
 		}
 		else
 		{
@@ -50,32 +50,54 @@ function BaseGame(extensions)
 		return new BaseGame(extensions);
 	}
 	
-	this.start = function ()
+	var _this = this;
+	
+	var updateID, renderID;
+	var container;
+	
+	_this.start = function (containerElement)
 	{
-		console.log("start");
+		container = containerElement;
+		_this.scene = new THREE.Scene();
+		var aspectRatio = container.offsetWidth / container.offsetHeight;
+		_this.camera = new THREE.PerspectiveCamera(45, aspectRatio, 0.001, 1000);
+		_this.camera.rotation.order = "YXZ";
+		_this.renderer = new THREE.WebGLRenderer();
+		_this.renderer.setSize(container.offsetWidth, container.offsetHeight);
+		container.appendChild(_this.renderer.domElement);
 		
 		for (var i = 0; i < extensions.length; i++)
 		{
 			extensions[i].start();
 		}
+		
+		updateID = setTimeout(_this.update, 5);
+		renderID = requestAnimationFrame(_this.render);
 	}
 	
-	this.update = function ()
+	_this.update = function ()
 	{
 		for (var i = 0; i < extensions.length; i++)
 		{
 			extensions[i].update();
 		}
-	}
-	
-	this.render = function ()
-	{
 		
+		updateID = setTimeout(_this.update, 5);
 	}
 	
-	this.end = function ()
+	_this.render = function ()
 	{
-		console.log("end");
+		_this.renderer.render(_this.scene, _this.camera);
+		
+		renderID = requestAnimationFrame(_this.render);
+	}
+	
+	_this.end = function ()
+	{
+		clearTimeout(updateID);
+		cancelAnimationFrame(renderID);
+		
+		container.removeChild(_this.renderer.domElement);
 		
 		for (var i = 0; i < extensions.length; i++)
 		{
