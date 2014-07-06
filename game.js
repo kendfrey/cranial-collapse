@@ -72,6 +72,8 @@ function BaseGame(extensions)
 		var geometry;
 		
 		_this.material.wall = _this.createTextureMaterial("wall.png");
+		_this.material.finish = _this.createTextureMaterial("finish.png");
+		_this.material.finish.transparent = true;
 		
 		geometry = _this.createTexturedPlane(1, 1);
 		_this.mesh.wallN = new THREE.Mesh(geometry, _this.material.wall);
@@ -119,6 +121,13 @@ function BaseGame(extensions)
 		_this.mesh.ceiling.position.z = -10;
 		_this.mesh.ceiling.rotation.x = Math.PI * 0.5;
 		_this.scene.add(_this.mesh.ceiling);
+		
+		geometry = _this.createTexturedPlane(1, 1);
+		_this.mesh.finish = new THREE.Mesh(geometry, _this.material.finish);
+		_this.mesh.finish.position.x = 0.5;
+		_this.mesh.finish.position.y = 0.5;
+		_this.mesh.finish.position.z = -19;
+		_this.scene.add(_this.mesh.finish);
 		
 		_this.reset();
 		
@@ -176,7 +185,7 @@ function BaseGame(extensions)
 		texture.minFilter = THREE.NearestFilter;
 		texture.wrapS = THREE.RepeatWrapping;
 		texture.wrapT = THREE.RepeatWrapping;
-		return new THREE.MeshBasicMaterial({ map: texture });
+		return new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
 	}
 	
 	_this.createTexturedPlane = function (width, height)
