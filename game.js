@@ -58,6 +58,9 @@ function BaseGame(extensions)
 	_this.mesh = {};
 	_this.material = {};
 	
+	_this.keysDown = {};
+	_this.mouseDelta = new THREE.Vector2(0, 0);
+	
 	_this.start = function (containerElement)
 	{
 		container = containerElement;
@@ -131,6 +134,10 @@ function BaseGame(extensions)
 		
 		_this.reset();
 		
+		addEventListener("keydown", onKeyDown);
+		addEventListener("keyup", onKeyUp);
+		addEventListener("mousemove", onMouseMove);
+		
 		for (var i = 0; i < extensions.length; i++)
 		{
 			extensions[i].start();
@@ -142,6 +149,8 @@ function BaseGame(extensions)
 	
 	_this.update = function ()
 	{
+		_this.mouseDelta.set(0, 0);
+		
 		for (var i = 0; i < extensions.length; i++)
 		{
 			extensions[i].update();
@@ -198,6 +207,27 @@ function BaseGame(extensions)
 		geometry.faceVertexUvs[0][1][1] = new THREE.Vector2(width, 0);
 		geometry.faceVertexUvs[0][1][2] = new THREE.Vector2(width, height);
 		return geometry;
+	}
+	
+	function onKeyDown(event)
+	{
+		if (!(event.keyCode in _this.keysDown))
+		{
+			_this.keysDown[event.keyCode] = true;
+		}
+	}
+
+	function onKeyUp(event)
+	{
+		delete _this.keysDown[event.keyCode];
+	}
+	
+	function onMouseMove(event)
+	{
+		var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || event.msMovementX || 0;
+		var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || event.msMovementY || 0;
+		_this.mouseDelta.x += movementX;
+		_this.mouseDelta.y += movementY;
 	}
 }
 
